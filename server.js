@@ -1,3 +1,5 @@
+require('newrelic');
+
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
@@ -37,8 +39,8 @@ if (!config.storage.type) {
 
 var Store, preferredStore;
 
-if (process.env.REDISTOGO_URL && config.storage.type === 'redis') {
-  var redisClient = require('redis-url').connect(process.env.REDISTOGO_URL);
+if (process.env.REDISCLOUD_URL && config.storage.type === 'redis') {
+  var redisClient = require('redis-url').connect(process.env.REDISCLOUD_URL);
   Store = require('./lib/document_stores/redis');
   preferredStore = new Store(config.storage, redisClient);
 }

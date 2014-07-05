@@ -3,7 +3,7 @@
   "host": "0.0.0.0",
   "port": 7777,
 
-  "keyLength": 10,
+  "keyLength": 64,
 
   "maxLength": 400000,
 
@@ -13,14 +13,14 @@
 
   "logging": [
     {
-      "level": "verbose",
+      "level": "info",
       "type": "Console",
       "colorize": true
     }
   ],
 
   "keyGenerator": {
-    "type": "phonetic"
+    "type": "random"
   },
 
   "storage": {
@@ -32,7 +32,6 @@
   },
 
   "documents": {
-    "about": "./about.md"
   }
 
 }
