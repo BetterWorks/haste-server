@@ -136,7 +136,8 @@ connect.createServer(
       next();
     });
   }),
-  connect.static(__dirname + '/static', { maxAge: config.staticMaxAge })
+  connect.static(__dirname + '/static', { maxAge: config.staticMaxAge }),
+  connect.compress()
 ).listen(config.port, config.host);
 
 winston.info('listening on ' + config.host + ':' + config.port);
