@@ -3,17 +3,17 @@
   "host": "0.0.0.0",
   "port": 7777,
 
-  "keyLength": 64,
+  "keyLength": 32,
 
   "maxLength": 5000000,
 
   "staticMaxAge": 86400,
 
-  "recompressStaticAssets": true,
+  "recompressStaticAssets": false,
 
   "logging": [
     {
-      "level": "info",
+      "level": "debug",
       "type": "Console",
       "colorize": true
     }
