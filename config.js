@@ -13,7 +13,7 @@
 
   "logging": [
     {
-      "level": "debug",
+      "level": "verbose",
       "type": "Console",
       "colorize": true
     }
