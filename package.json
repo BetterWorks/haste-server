@@ -14,10 +14,10 @@
   },
   "main": "haste",
   "dependencies": {
-    "busboy": "0.2.11",
+    "busboy": "0.2.12",
     "connect": "1.9.2",
     "hiredis": "0.4.1",
-    "newrelic": "1.22.2",
+    "newrelic": "1.25.0",
     "redis": "0.12.1",
     "redis-url": "1.2.1",
     "uglify-js": "1.3.3",
@@ -29,7 +29,7 @@
   },
   "bundledDependencies": [],
   "engines": {
-    "node": "0.12.x"
+    "node": "4.2.x"
   },
   "bin": {
     "haste-server": "./server.js"
