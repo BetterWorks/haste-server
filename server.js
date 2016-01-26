@@ -150,7 +150,7 @@ require('express-cluster')(function(worker) {
     // res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     // res.header('Expires', '-1');
     // res.header('Pragma', 'no-cache');
-    if (!closing && new Date().getTime() - start > 60 * 1000) {
+    if (!closing && new Date().getTime() - start > 10 * 60 * 1000) {
       closing = true;
       server.close(function() {
         process.exit();
