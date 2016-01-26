@@ -16,6 +16,7 @@
   "dependencies": {
     "busboy": "0.2.12",
     "connect": "1.9.2",
+    "express-cluster": "0.0.x",
     "hiredis": "0.4.1",
     "newrelic": "1.25.0",
     "redis": "0.12.1",

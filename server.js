@@ -1,4 +1,6 @@
-require('newrelic');
+if (process.env.NEW_RELIC_LICENSE_KEY) {
+  require('newrelic');
+}
 
 var http = require('http');
 var url = require('url');
@@ -101,42 +103,59 @@ var documentHandler = new DocumentHandler({
   keyGenerator: keyGenerator
 });
 
-// Set the server up with a static cache
-connect.createServer(
-  // First look for api calls
-  connect.router(function(app) {
-    // get raw documents - support getting with extension
-    app.get('/raw/:id', function(request, response, next) {
-      var skipExpire = !!config.documents[request.params.id];
-      var key = request.params.id.split('.')[0];
-      return documentHandler.handleRawGet(key, response, skipExpire);
-    });
-    // add documents
-    app.post('/documents', function(request, response, next) {
-      return documentHandler.handlePost(request, response);
-    });
-    // get documents
-    app.get('/documents/:id', function(request, response, next) {
-      var skipExpire = !!config.documents[request.params.id];
-      return documentHandler.handleGet(
-        request.params.id,
-        response,
-        skipExpire
-      );
-    });
-  }),
-  // Otherwise, static
-  connect.staticCache(),
-  connect.static(__dirname + '/static', { maxAge: config.staticMaxAge }),
-  // Then we can loop back - and everything else should be a token,
-  // so route it back to /index.html
-  connect.router(function(app) {
-    app.get('/:id', function(request, response, next) {
-      request.url = request.originalUrl = '/index.html';
-      next();
-    });
-  }),
-  connect.static(__dirname + '/static', { maxAge: config.staticMaxAge })
-).listen(config.port, config.host);
+require('express-cluster')(function(worker) {
+  winston.info('worker #' + worker.id + ' started on ' + config.host + ':' + config.port);
+  // Set the server up with a static cache
+  var server = connect.createServer(
+    // First look for api calls
+    connect.router(function(app) {
+      // get raw documents - support getting with extension
+      app.get('/raw/:id', function(request, response, next) {
+        var skipExpire = !!config.documents[request.params.id];
+        var key = request.params.id.split('.')[0];
+        return documentHandler.handleRawGet(key, response, skipExpire);
+      });
+      // add documents
+      app.post('/documents', function(request, response, next) {
+        return documentHandler.handlePost(request, response);
+      });
+      // get documents
+      app.get('/documents/:id', function(request, response, next) {
+        var skipExpire = !!config.documents[request.params.id];
+        return documentHandler.handleGet(
+          request.params.id,
+          response,
+          skipExpire
+        );
+      });
+    }),
+    // Otherwise, static
+    connect.staticCache(),
+    connect.static(__dirname + '/static', { maxAge: config.staticMaxAge }),
+    // Then we can loop back - and everything else should be a token,
+    // so route it back to /index.html
+    connect.router(function(app) {
+      app.get('/:id', function(request, response, next) {
+        request.url = request.originalUrl = '/index.html';
+        next();
+      });
+    }),
+    connect.static(__dirname + '/static', { maxAge: config.staticMaxAge })
+  ).listen(config.port, config.host);
 
-winston.info('listening on ' + config.host + ':' + config.port);
+  var numRequests = 0;
+  var start = new Date().getTime();
+  var closing = false;
+  server.on('request', function(req, res) {
+    // res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    // res.header('Expires', '-1');
+    // res.header('Pragma', 'no-cache');
+    if (!closing && new Date().getTime() - start > 60 * 1000) {
+      closing = true;
+      server.close(function() {
+        process.exit();
+      });
+    }
+  });
+  return server;
+}, {count: 4});
