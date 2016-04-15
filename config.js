@@ -3,7 +3,7 @@
   "host": "0.0.0.0",
   "port": 7777,
 
-  "keyLength": 12,
+  "keyLength": 16,
 
   "maxLength": 5000000,
 
