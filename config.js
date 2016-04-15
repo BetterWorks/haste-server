@@ -23,6 +23,15 @@
     "type": "random"
   },
 
+  "rateLimits": {
+    "categories": {
+      "normal": {
+        "totalRequests": 500,
+        "every": 30000
+      }
+    }
+  },
+
   "storage": {
     "type": "redis",
     "host": "0.0.0.0",
